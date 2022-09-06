@@ -118,7 +118,7 @@ manifests: controller-gen
 		output:crd:artifacts:config=hack/crd/bases
 
 gateway:
-	docker build -t oamdev/cluster-gateway:${IMG_TAG} \
+	docker build -t ack-agility-registry.cn-shanghai.cr.aliyuncs.com/ecp_builder/cluster-gateway:${IMG_TAG} \
 		--build-arg OS=${OS} \
 		--build-arg ARCH=${ARCH} \
 		-f cmd/apiserver/Dockerfile \

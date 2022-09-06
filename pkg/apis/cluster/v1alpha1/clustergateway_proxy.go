@@ -202,6 +202,9 @@ func (p *proxyHandler) ServeHTTP(writer http.ResponseWriter, request *http.Reque
 	newReq.Header = utilnet.CloneHeader(request.Header)
 	newReq.URL.Path = p.path
 
+	// for alibabacloud cnstack
+	newReq.Header.Add("Impersonate-User", request.Header.Get("Iam-User"))
+
 	urlAddr, err := GetEndpointURL(cluster)
 	if err != nil {
 		responsewriters.InternalError(writer, request, errors.Wrapf(err, "failed parsing endpoint for cluster %s", cluster.Name))
@@ -270,6 +273,7 @@ func (p *proxyHandler) ServeHTTP(writer http.ResponseWriter, request *http.Reque
 	proxy.Responder = ErrorResponderFunc(func(w http.ResponseWriter, req *http.Request, err error) {
 		p.responder.Error(err)
 	})
+
 	proxy.ServeHTTP(writer, newReq)
 }
 
