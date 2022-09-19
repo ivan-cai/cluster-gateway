@@ -202,9 +202,6 @@ func (p *proxyHandler) ServeHTTP(writer http.ResponseWriter, request *http.Reque
 	newReq.Header = utilnet.CloneHeader(request.Header)
 	newReq.URL.Path = p.path
 
-	// for alibabacloud cnstack
-	newReq.Header.Add("Impersonate-User", request.Header.Get("Iam-User"))
-
 	urlAddr, err := GetEndpointURL(cluster)
 	if err != nil {
 		responsewriters.InternalError(writer, request, errors.Wrapf(err, "failed parsing endpoint for cluster %s", cluster.Name))
@@ -225,6 +222,7 @@ func (p *proxyHandler) ServeHTTP(writer http.ResponseWriter, request *http.Reque
 	if p.impersonate || utilfeature.DefaultFeatureGate.Enabled(featuregates.ClientIdentityPenetration) {
 		cfg.Impersonate = getImpersonationConfig(request)
 	}
+
 	rt, err := restclient.TransportFor(cfg)
 	if err != nil {
 		responsewriters.InternalError(writer, request, errors.Wrapf(err, "failed creating cluster proxy client %s", cluster.Name))
