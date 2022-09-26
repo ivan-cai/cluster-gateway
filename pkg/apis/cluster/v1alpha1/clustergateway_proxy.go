@@ -222,6 +222,7 @@ func (p *proxyHandler) ServeHTTP(writer http.ResponseWriter, request *http.Reque
 	if p.impersonate || utilfeature.DefaultFeatureGate.Enabled(featuregates.ClientIdentityPenetration) {
 		cfg.Impersonate = getImpersonationConfig(request)
 	}
+
 	rt, err := restclient.TransportFor(cfg)
 	if err != nil {
 		responsewriters.InternalError(writer, request, errors.Wrapf(err, "failed creating cluster proxy client %s", cluster.Name))
@@ -270,6 +271,7 @@ func (p *proxyHandler) ServeHTTP(writer http.ResponseWriter, request *http.Reque
 	proxy.Responder = ErrorResponderFunc(func(w http.ResponseWriter, req *http.Request, err error) {
 		p.responder.Error(err)
 	})
+
 	proxy.ServeHTTP(writer, newReq)
 }
 
