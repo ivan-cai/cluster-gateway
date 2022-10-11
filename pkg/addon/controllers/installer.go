@@ -3,6 +3,7 @@ package controllers
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"time"
@@ -571,6 +572,21 @@ func newClusterGatewayDeployment(addon *addonv1alpha1.ClusterManagementAddOn, co
 			},
 		},
 	}
+
+	if addon.Annotations["oam.dev/tolerations"] != "" {
+		var t []corev1.Toleration
+		if err := json.Unmarshal([]byte(addon.Annotations["oam.dev/tolerations"]), &t); err == nil {
+			deploy.Spec.Template.Spec.Tolerations = t
+		}
+	}
+
+	if addon.Annotations["oam.dev/nodeselector"] != "" {
+		s := map[string]string{}
+		if err := json.Unmarshal([]byte(addon.Annotations["oam.dev/nodeselector"]), &s); err == nil {
+			deploy.Spec.Template.Spec.NodeSelector = s
+		}
+	}
+
 	return deploy
 }
 
