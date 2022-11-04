@@ -30,7 +30,7 @@ func registerFlags() {
 		"Path to kubeconfig of the hub cluster.")
 	flag.StringVar(&context.TestCluster,
 		"test-cluster",
-		"",
+		"aaa",
 		"The target cluster to run the e2e suite.")
 	flag.BoolVar(&context.IsOCMInstalled,
 		"ocm-installed",
