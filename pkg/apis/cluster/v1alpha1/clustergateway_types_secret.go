@@ -40,6 +40,10 @@ const (
 )
 
 func (in *ClusterGateway) Get(ctx context.Context, name string, _ *metav1.GetOptions) (runtime.Object, error) {
+	if singleton.GetSecretControl() == nil || singleton.GetClusterControl() == nil {
+		return nil, fmt.Errorf("loopback clients are not inited")
+	}
+
 	clusterSecret, err := singleton.GetSecretControl().Get(ctx, name)
 	if err != nil {
 		klog.Warningf("Failed getting secret %q/%q: %v", config.SecretNamespace, name, err)
